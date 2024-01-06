@@ -1,8 +1,9 @@
 import sap_pkg::*;
 
-module dff(input reg clk, d, output reg q);
+module dff(input reg clk, load, val, d, output reg q);
     always@(negedge clk) begin
-        q<=d;
+        if(!load) q<=val;
+        else q<=d;
     end
 endmodule
 
@@ -12,26 +13,20 @@ module ring_counter #(parameter N=6, parameter WIDTH=3)
     genvar i;
     generate;
         for(i=0; i<N; i++) begin
-            dff ff_dut(clk,i==0?counter[N-1]:counter[i-1],counter[i]);
+            dff ff_dut(clk,rst, i==0?1'b1:1'b0, i==0?counter[N-1]:counter[i-1],counter[i]);
         end
     endgenerate
-
-    always @(negedge clk) begin
-        if (!rst)
-            counter <= 1;
-    end
     
 endmodule
 
-module controller 
-(input reg[3:0] ir_out,
-input reg rst, 
-STATE_t state, 
-output reg[11:0] controlword,
-output reg clk,
-output reg clkn,
-output reg clr,
-output reg clrn);
+module controller (input reg[3:0] ir_out,
+                input reg rst, 
+                STATE_t state, 
+                output reg[11:0] controlword,
+                output reg clk,
+                output reg clkn,
+                output reg clr,
+                output reg clrn);
 
     assign clr = rst;
     assign clrn = ~clr;

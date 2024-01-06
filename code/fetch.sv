@@ -3,9 +3,9 @@ import sap_pkg::*;
 
 module program_counter(input reg clk, rst, ep, cp,
         // output
-        bus_if.feeder bus_port );
+        bus_if.feeder bus_port, output reg[3:0] pc );
 
-    reg[3:0] pc;
+    // reg[3:0] pc;
     always @(negedge clk) begin
         if(!rst) pc= '0;
         else begin
